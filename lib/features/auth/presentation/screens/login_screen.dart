@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:taamol_tech/core/constants/app_colors.dart';
 import 'package:taamol_tech/features/home/presentation/pages/main_screen.dart';
+import 'package:taamol_tech/features/auth/presentation/screens/sign_up_screen.dart';
 import 'forget_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -86,17 +88,51 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 1. عنوان الشاشة
-                  const Text(
-                    'تسجيل الدخول',
-                    style: TextStyle(
-                      fontSize: 26,
+                  // 1. Header Section
+                  Hero(
+                    tag: 'app_logo',
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.cardWhite,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          )
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.devices_other_rounded,
+                        size: 40,
+                        color: AppColors.primaryCyan,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    isArabic ? 'أهلاً بعودتك' : 'Welcome Back',
+                    style: const TextStyle(
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppColors.deepPurple,
                       fontFamily: 'Tajawal',
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 8),
+                  Text(
+                    isArabic ? 'قم بتسجيل الدخول للمتابعة' : 'Sign in to continue',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                      fontFamily: 'Tajawal',
+                    ),
+                  ),
+                  const SizedBox(height: 32),
 
                   // 2. حقل البريد الإلكتروني
                   TextFormField(
@@ -108,7 +144,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     validator: (val) =>
@@ -119,20 +156,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   // 3. حقل كلمة المرور
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       labelText: isArabic ? 'كلمة المرور' : 'Password',
                       prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primaryCyan),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                      ),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     validator: (val) =>
                         val == null || val.isEmpty ? 'يرجى إدخال كلمة المرور' : null,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
                   // 4. زر نسيت كلمة المرور
                   Align(
@@ -156,19 +201,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
                   // 5. زر تسجيل الدخول الرئيسي
                   SizedBox(
                     width: double.infinity,
-                    height: 50,
+                    height: 56,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _handleLogin,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryCyan,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
+                        elevation: 0,
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
@@ -183,22 +229,68 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                     ),
                   ),
+                  const SizedBox(height: 24),
+
+                  // 6. رابط إنشاء حساب جديد
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        isArabic ? 'ليس لديك حساب؟' : "Don't have an account?",
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontFamily: 'Tajawal',
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const SignUpScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          isArabic ? 'إنشاء حساب' : 'Sign Up',
+                          style: const TextStyle(
+                            color: AppColors.deepPurple,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Tajawal',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
 
-                  // 6. زر المتابعة كزائر (توجيه مباشر دون مسح session)
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MainScreen()),
-                      );
-                    },
-                    child: Text(
-                      isArabic ? 'المتابعة كزائر' : 'Continue as Guest',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontFamily: 'Tajawal',
-                        fontWeight: FontWeight.w600,
+                  // 7. زر المتابعة كزائر
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MainScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.person_outline, color: Colors.grey),
+                      label: Text(
+                        isArabic ? 'المتابعة كزائر' : 'Continue as Guest',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: 'Tajawal',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.grey.shade300),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                     ),
                   ),

@@ -202,6 +202,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
+                  ] else ...[
+                    // 🌟 إضافة هوية "زائر" لتبدو كأن هناك مستخدم (Guest User Identity)
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryCyan.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        isArabic ? 'جلسة زائر نشطة' : 'Active Guest Session',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.primaryCyan,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Tajawal',
+                        ),
+                      ),
+                    ),
                   ],
 
                   // 🌟 الواجهة الخاصة بالزائر وتوجيهه لتسجيل الدخول

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/constants/app_colors.dart'; //
-import '../../../../core/constants/app_strings.dart'; //
-import '../home/presentation/pages/main_screen.dart';
-import 'presentation/screens/login_screen.dart';
-import 'presentation/screens/onboarding_screen.dart';
+import 'package:taamol_tech/core/constants/app_colors.dart';
+import 'package:taamol_tech/core/constants/app_strings.dart';
+import 'package:taamol_tech/features/home/presentation/pages/main_screen.dart';
+import 'package:taamol_tech/features/auth/presentation/screens/login_screen.dart';
+import 'package:taamol_tech/features/auth/presentation/screens/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -51,78 +51,101 @@ class _SplashScreenState extends State<SplashScreen> {
   void _goTo(Widget screen) {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => screen),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 800),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.deepPurple, //[cite: 1]
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // الشعار
-            Container(
-              width: 110,
-              height: 110,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.cardWhite, //[cite: 1]
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  )
-                ],
-              ),
-              child: const Icon(
-                Icons.devices_other_rounded,
-                size: 60,
-                color: AppColors.primaryCyan, //[cite: 1]
-              ),
+      backgroundColor: AppColors.deepPurple,
+      body: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 1200),
+        curve: Curves.easeOutBack,
+        builder: (context, value, child) {
+          return Opacity(
+            opacity: value,
+            child: Transform.scale(
+              scale: 0.8 + (0.2 * value),
+              child: child,
             ),
-            const SizedBox(height: 24),
+          );
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // الشعار
+              Container(
+                width: 110,
+                height: 110,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.cardWhite,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    )
+                  ],
+                ),
+                child: const Icon(
+                  Icons.devices_other_rounded,
+                  size: 60,
+                  color: AppColors.primaryCyan,
+                ),
+              ),
+              const SizedBox(height: 24),
 
-            // اسم الشركة بالعربي
-            const Text(
-              "تكامل تيك التجارية",
-              style: TextStyle(
-                color: AppColors.cardWhite, //[cite: 1]
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Tajawal',
+              // اسم الشركة بالعربي
+              Text(
+                AppStrings.tr(context, AppStrings.appNameAr),
+                style: const TextStyle(
+                  color: AppColors.cardWhite,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Tajawal',
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
+              const SizedBox(height: 4),
 
-            // اسم الشركة بالإنجليزي
-            const Text(
-              "Tkamol Tech Trading",
-              style: TextStyle(
-                color: AppColors.primaryCyan, //[cite: 1]
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 2,
-                fontFamily: 'Montserrat',
+              // اسم الشركة بالإنجليزي
+              Text(
+                AppStrings.tr(context, AppStrings.appNameEn),
+                style: const TextStyle(
+                  color: AppColors.primaryCyan,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 2,
+                  fontFamily: 'Montserrat',
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            // السلوجان المترجم
-            Text(
-              AppStrings.tr(context, AppStrings.sloganAr),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.borderLight, //[cite: 1]
-                fontSize: 12,
-                fontFamily: 'Tajawal',
+              // السلوجان المترجم
+              Text(
+                AppStrings.tr(context, AppStrings.sloganAr),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.borderLight,
+                  fontSize: 12,
+                  fontFamily: 'Tajawal',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

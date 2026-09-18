@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:taamol_tech/core/constants/app_colors.dart';
-import 'package:taamol_tech/features/admin/screens/add_edit_product_screen.dart';
 import 'package:taamol_tech/features/home/presentation/pages/contact_us_screen.dart';
 import 'package:taamol_tech/features/home/presentation/pages/home_screen.dart';
+import 'package:taamol_tech/features/home/presentation/pages/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
